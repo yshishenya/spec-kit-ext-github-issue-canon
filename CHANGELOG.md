@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 - No entries yet.
 
+## [0.2.5] - 2026-07-08
+
+### Fixed
+
+- Fixed normalization for hierarchical area labels such as
+  `area:support/custody`: if the full area label already exists, normalization
+  no longer tries to add a redundant missing root label such as `area:support`.
+
 ## [0.2.4] - 2026-07-08
 
 ### Fixed

@@ -196,7 +196,10 @@ def main() -> int:
         if match:
             add_labels.add(f"feature:{match.group('feature')}")
             add_labels.add(f"priority:{match.group('priority')}")
-            add_labels.add(f"area:{match.group('area').split('/', 1)[0]}")
+            area = match.group("area")
+            area_root = area.split("/", 1)[0]
+            if f"area:{area_root}" not in labels and f"area:{area}" not in labels:
+                add_labels.add(f"area:{area_root}")
         if not any(label.startswith("type:") for label in labels):
             add_labels.add(infer_type(issue.get("body") or "", issue.get("title") or ""))
         args = ["gh", "issue", "edit", str(issue["number"]), "--repo", slug]
