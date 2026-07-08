@@ -200,6 +200,7 @@ def main() -> int:
         if not any(label.startswith("type:") for label in labels):
             add_labels.add(infer_type(issue.get("body") or "", issue.get("title") or ""))
         args = ["gh", "issue", "edit", str(issue["number"]), "--repo", slug]
+        base_arg_count = len(args)
         if title != issue.get("title"):
             args.extend(["--title", title])
         body = canonical_body(issue, title)
@@ -208,7 +209,7 @@ def main() -> int:
         new_labels = sorted(add_labels - labels)
         if new_labels:
             args.extend(["--add-label", ",".join(new_labels)])
-        if len(args) > 5:
+        if len(args) > base_arg_count:
             run(args)
             changed.append(issue["number"])
 

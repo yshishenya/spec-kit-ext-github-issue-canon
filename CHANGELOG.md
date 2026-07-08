@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 - No entries yet.
 
+## [0.2.4] - 2026-07-08
+
+### Fixed
+
+- Fixed normalization so it does not call `gh issue edit` for already canonical
+  issues that need no title, body, or label changes.
+
 ## [0.2.3] - 2026-07-08
 
 ### Changed
