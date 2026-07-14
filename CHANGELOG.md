@@ -6,6 +6,32 @@ All notable changes to this project are documented in this file.
 
 - No entries yet.
 
+## [0.3.0] - 2026-07-14
+
+### Added
+
+- Added unit coverage for remote parsing, issue validation, label
+  normalization, and byte-reproducible release archives.
+- Added pull-request CI with workflow linting, security analysis, and a single
+  stable `CI / required` branch-protection check.
+- Added an annotated-tag release workflow that builds once, verifies the
+  catalog checksum, and publishes the verified package without checking out
+  source in the write-enabled job.
+
+### Changed
+
+- Replaced GitHub-generated source archives with deterministic, checksummed
+  extension packages in the release catalog.
+- Normalization now removes stale `feature:*` and `priority:*` labels instead
+  of leaving conflicting structural metadata behind.
+- Validation now rejects conflicting feature and priority labels and parses
+  supported GitHub SSH and HTTPS remotes strictly.
+
+### Removed
+
+- Removed the unused configuration template and its advertised defaults;
+  normalization remains an explicit command and is never silently enabled.
+
 ## [0.2.6] - 2026-07-13
 
 ### Changed
