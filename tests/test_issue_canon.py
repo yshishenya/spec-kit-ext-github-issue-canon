@@ -199,6 +199,17 @@ class ReleaseBuildTests(unittest.TestCase):
             f"{result['sha256']}  github-issue-canon-{result['version']}.zip\n",
         )
 
+    def test_publish_job_uses_verified_notes_without_checkout(self) -> None:
+        workflow = (ROOT / ".github" / "workflows" / "release.yml").read_text(
+            encoding="utf-8"
+        )
+        package, publish = workflow.split("\n  publish:\n", 1)
+        self.assertIn("git for-each-ref", package)
+        self.assertIn("dist/release-notes.md", package)
+        self.assertIn("--notes-file dist/release-notes.md", publish)
+        self.assertNotIn("actions/checkout@", publish)
+        self.assertNotIn("--notes-from-tag", publish)
+
 
 if __name__ == "__main__":
     unittest.main()
