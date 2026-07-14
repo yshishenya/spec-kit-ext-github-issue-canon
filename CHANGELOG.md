@@ -4,7 +4,11 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
-- No entries yet.
+### Fixed
+
+- Pass annotated tag notes through the read-only package artifact so the
+  checkout-free publish job works with the GitHub CLI available on hosted
+  runners.
 
 ## [0.3.0] - 2026-07-14
 
