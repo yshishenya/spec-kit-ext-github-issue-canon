@@ -4,11 +4,15 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-14
+
 ### Fixed
 
 - Pass annotated tag notes through the read-only package artifact so the
   checkout-free publish job works with the GitHub CLI available on hosted
   runners.
+- Exclude optional GPG signature blocks from generated release notes while
+  keeping the annotated tag subject and body.
 
 ## [0.3.0] - 2026-07-14
 
