@@ -59,7 +59,9 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          git for-each-ref --format='%(contents)' "refs/tags/$RELEASE_TAG" > dist/release-notes.md
+          git for-each-ref \
+            --format='%(contents:subject)%0a%0a%(contents:body)' \
+            "refs/tags/$RELEASE_TAG" > dist/release-notes.md
           test -s dist/release-notes.md
 
       - name: Upload immutable package artifact

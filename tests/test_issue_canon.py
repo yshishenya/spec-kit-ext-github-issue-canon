@@ -205,6 +205,8 @@ class ReleaseBuildTests(unittest.TestCase):
         )
         package, publish = workflow.split("\n  publish:\n", 1)
         self.assertIn("git for-each-ref", package)
+        self.assertIn("%(contents:subject)%0a%0a%(contents:body)", package)
+        self.assertNotIn("--format='%(contents)'", package)
         self.assertIn("dist/release-notes.md", package)
         self.assertIn("--notes-file dist/release-notes.md", publish)
         self.assertNotIn("actions/checkout@", publish)
