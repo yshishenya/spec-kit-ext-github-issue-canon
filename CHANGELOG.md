@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-08-30
+
+### Fixed
+
+- Prevent command imports from writing executable Python bytecode into the
+  installed extension tree, so running issue-canon hooks no longer creates
+  false bootstrap integrity drift.
+
 ## [0.3.1] - 2026-07-14
 
 ### Fixed

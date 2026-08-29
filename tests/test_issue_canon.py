@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -211,6 +212,32 @@ class ReleaseBuildTests(unittest.TestCase):
         self.assertIn("--notes-file dist/release-notes.md", publish)
         self.assertNotIn("actions/checkout@", publish)
         self.assertNotIn("--notes-from-tag", publish)
+
+
+class RuntimeArtifactTests(unittest.TestCase):
+    def test_command_imports_do_not_write_bytecode(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            scripts = Path(directory) / "scripts"
+            scripts.mkdir()
+            for source in (ROOT / "scripts").glob("*.py"):
+                shutil.copy2(source, scripts / source.name)
+            for module in (
+                "ensure_issue_canon",
+                "normalize_issue_canon",
+                "validate_issue_canon",
+            ):
+                subprocess.run(
+                    [
+                        sys.executable,
+                        "-c",
+                        f"import runpy; runpy.run_path('{module}.py')",
+                    ],
+                    cwd=scripts,
+                    check=True,
+                )
+            self.assertFalse(
+                any(path.suffix in {".pyc", ".pyo"} for path in scripts.rglob("*"))
+            )
 
 
 if __name__ == "__main__":
