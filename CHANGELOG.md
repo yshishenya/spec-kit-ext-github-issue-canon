@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-09-02
+
+### Changed
+
+- Синхронизирован PR-шаблон с текущим governance contract: добавлены Feature
+  identity, exact-SHA и authoritative GitHub gate, fallback receipt policy и
+  changelog fragments.
+
 ## [0.3.2] - 2026-08-30
 
 ### Fixed
