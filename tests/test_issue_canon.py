@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import build_release  # noqa: E402
+import ensure_issue_canon as ensure  # noqa: E402
 import issue_canon_common as common  # noqa: E402
 import normalize_issue_canon as normalize  # noqa: E402
 
@@ -175,6 +176,39 @@ class LabelTests(unittest.TestCase):
             common.ensure_label("owner/repo", "priority:P1", "d93f0b", "High", existing)
         self.assertEqual(existing["priority:P1"], ("d93f0b", "High"))
         self.assertIn("create", run.call_args.args[0])
+
+
+class EnsureTests(unittest.TestCase):
+    def test_ensure_installs_then_preserves_project_pr_template(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            template = root / ".github/pull_request_template.md"
+            canon = root / ensure.CANON_PATH
+            with (
+                patch.object(ensure, "repo_root", return_value=root),
+                patch.object(ensure, "extension_root", return_value=ROOT),
+                patch.object(ensure, "repo_slug", return_value="owner/repo"),
+                patch.object(ensure, "current_feature", return_value="211"),
+                patch.object(ensure, "ensure_labels"),
+                patch.object(common, "run", side_effect=AssertionError("unexpected GitHub call")),
+            ):
+                self.assertEqual(ensure.main(), 0)
+                self.assertEqual(template.read_bytes(), (ROOT / "templates/github/pull_request_template.md").read_bytes())
+                project_bytes = template.read_bytes() + b"\nProject checks: governance-fast, macos-pr, pr-metadata\n"
+                template.write_bytes(project_bytes)
+                digest = hashlib.sha256(project_bytes).hexdigest()
+                for _ in range(2):
+                    canon.write_text(ensure.MANAGED_MARKER + "\nold managed canon\n")
+                    self.assertEqual(ensure.main(), 0)
+                    self.assertEqual(template.read_bytes(), project_bytes)
+                    self.assertEqual(hashlib.sha256(template.read_bytes()).hexdigest(), digest)
+                    self.assertEqual(canon.read_bytes(), (ROOT / "templates" / ensure.CANON_TEMPLATE).read_bytes())
+                template.unlink()
+                template.symlink_to("missing-project-template.md")
+                self.assertEqual(ensure.main(), 0)
+                self.assertTrue(template.is_symlink())
+                self.assertEqual(template.readlink(), Path("missing-project-template.md"))
+                self.assertFalse(template.exists())
 
 
 class ReleaseBuildTests(unittest.TestCase):
